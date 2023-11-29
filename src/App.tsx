@@ -21,11 +21,13 @@ function App() {
   const [matchEnded, setMatchEnded] = useState(false);
   const [pg1Frames, setPg1Frames] = useState<Frame[]>([]);
   const [pg2Frames, setPg2Frames] = useState<Frame[]>([]);
+  const [pg1Turn, setPg1Turn] = useState<boolean>(true);
 
   const rollBallHandler = () => {
     if (!matchEnded) {
       // check if pg1 has already played this frame
       if (!pg1MatchScore[currentFrame].played) {
+        setPg1Turn(true);
         // get hit score in range of remainig skittle
         const hitScore = rollBall(pg1RemainSkittle);
         // set remaining skittle
@@ -45,6 +47,7 @@ function App() {
         // react setter for display played rows
         setPg1Frames(playedFrame);
       } else if (!pg2MatchScore[currentFrame].played) {
+        setPg1Turn(false);
         // same for pg2...
         const hitScore = rollBall(pg2RemainSkittle);
         pg2RemainSkittle = 10 - hitScore;
@@ -96,13 +99,19 @@ function App() {
       <Title pg1Name={matchData[0].surname} pg2Name={matchData[1].surname} />
       <div className="stats-container">
         <div>
-          <PlayerInfo pgName={`${matchData[0].name} ${matchData[0].surname}`} />
+          <PlayerInfo
+            pgTurn={pg1Turn}
+            pgName={`${matchData[0].name} ${matchData[0].surname}`}
+          />
         </div>
         <div>
           <h6>FRAMES</h6>
         </div>
         <div>
-          <PlayerInfo pgName={`${matchData[1].name} ${matchData[1].surname}`} />
+          <PlayerInfo
+            pgTurn={!pg1Turn}
+            pgName={`${matchData[1].name} ${matchData[1].surname}`}
+          />
         </div>
       </div>
       <TurnStats
